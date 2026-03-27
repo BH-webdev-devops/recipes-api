@@ -25,7 +25,10 @@ export const getAllUsers = async (req, res) => {
 
 export const createUser = async (req, res) => {
     try {
-        const newUser = await User.create(req.body)
+        const newUser = await User.create({
+            ...req.body,
+            img : '/public/images/' + req.file.filename
+        })
         return res.status(201).json(newUser)
     }
 

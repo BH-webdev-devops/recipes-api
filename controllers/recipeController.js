@@ -3,6 +3,7 @@ import User from "../models/User.js";
 
 
 export const getAllRecipes = async (req, res) => {
+    console.log(req.token)
     try {
         const recipes = await Recipe.findAll({
             attributes: ["id", "title", "ingredients", "img", "category"],
@@ -29,14 +30,14 @@ export const getAllRecipes = async (req, res) => {
 }
 
 export const createRecipe = async (req, res) => {
-    const { title, img, ingredients, category, userID } = req.body
+    const { title, img, ingredients, category  } = req.body
     try {
         const newRecipe = await Recipe.create({
             title,
             img,
             ingredients,
             category,
-            userID
+            userID : req.token.id
         })
         return res.status(201).json(newRecipe)
     }
@@ -75,6 +76,10 @@ export const getRecipeByID = async (req, res, recipeID) => {
 export const updateRecipeByID = async (req, res) => {
     const { recipe } = req
     const { title, ingredients, img, category } = req.body
+    const token = req.token
+    if(token.id !== recipe.author.id){
+        return res.status(400).json(`You are not the author of the recipe`)
+    }
 
     try {
         const updatedRecipe = await recipe.update({
