@@ -9,10 +9,13 @@ import { swaggerSpec } from './config/swagger.js'
 import swaggerUi from 'swagger-ui-express'
 import path from 'path'
 import fs from 'fs'
+import cors from 'cors'
 import 'dotenv/config'
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
+
+app.use(cors())
 app.use(express.static('public'))
 app.use('/images', express.static('public/images'));
 

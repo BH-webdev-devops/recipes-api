@@ -3,8 +3,8 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
 
-export const regiterNewUser = async (req, res) => {
-    const { firstName, email, password } = req.body
+export const registerNewUser = async (req, res) => {
+    const { firstName, email, password, role } = req.body
     if (!firstName || !email || !password) {
         return res.status(400).json(`All fields are required`)
     }
@@ -20,7 +20,8 @@ export const regiterNewUser = async (req, res) => {
         const newUser = await User.create({
             firstName,
             email,
-            password: hashedPassword
+            password: hashedPassword,
+            role
         })
 
         return res.status(201).json(`Welcome to the recipes app ${newUser.firstName}`)
@@ -33,7 +34,8 @@ export const regiterNewUser = async (req, res) => {
 
 
 export const loginUser = async (req, res) => {
-    const { email, password } = req.body
+    const { email, password } = req.body.userInfo
+
     if (!email || !password) {
         return res.status(400).json(`Email and password are required`)
     }
@@ -42,9 +44,9 @@ export const loginUser = async (req, res) => {
         if (!verifyUser) {
             return res.status(400).json(`Email or password are not valid`)
         }
-        const verifyPassword = bcrypt.compare(password, verifyUser.password)
+        const verifyPassword = await bcrypt.compare(password, verifyUser.password)
         if (!verifyPassword) {
-            return res.status(400).json(`Email or password are not valid`)
+            return res.status(400).json({error : 'Email or password are not valid'})
         }
         const token = await jwt.sign({ id: verifyUser.id }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
@@ -53,6 +55,24 @@ export const loginUser = async (req, res) => {
         // return res.status(200).json(token)
     }
 
+    catch (err) {
+        console.log(err)
+        return res.status(500).json(`Internal server error`)
+    }
+}
+
+
+export const getUser = async (req, res) => {
+    const {id} = req.token
+    try{
+        const user = await User.findByPk(id, {
+            attributes : {exclude : ['password']}
+        })
+        if(!user){
+            return res.status(404).json(`User not found`)
+        }
+        return res.status(200).json(user)
+    }
     catch (err) {
         console.log(err)
         return res.status(500).json(`Internal server error`)

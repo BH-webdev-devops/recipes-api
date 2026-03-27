@@ -3,6 +3,8 @@ const usersRouter = Router()
 import { createUser, getAllUsers, getUserByID, updateUserByID } from '../controllers/userController.js'
 import { checkID } from '../middlewares/checkID.js'
 import { upload } from '../middlewares/fileUpload.js'
+import { checkToken } from '../middlewares/checkToken.js'
+import { checkIsAdmin } from '../middlewares/checkIsAdmin.js'
 
 
 /**
@@ -14,7 +16,7 @@ import { upload } from '../middlewares/fileUpload.js'
  *       200:
  *         description: A list of users
  */
-usersRouter.get(`/users`, getAllUsers)
+usersRouter.get(`/users`, checkToken, checkIsAdmin, getAllUsers)
 usersRouter.get(`/user/:id`, checkID, getUserByID)
 /**
  * @swagger

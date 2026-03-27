@@ -15,9 +15,7 @@ export const getAllRecipes = async (req, res) => {
                 },
 
             ],
-
         }
-
         )
         if (recipes.length < 1) {
             return res.status(404).json(`Recipes not found`)
@@ -30,14 +28,14 @@ export const getAllRecipes = async (req, res) => {
 }
 
 export const createRecipe = async (req, res) => {
-    const { title, img, ingredients, category  } = req.body
+    const { title, img, ingredients, category } = req.body
     try {
         const newRecipe = await Recipe.create({
             title,
             img,
             ingredients,
             category,
-            userID : req.token.id
+            userID: req.token.id
         })
         return res.status(201).json(newRecipe)
     }
@@ -73,11 +71,15 @@ export const getRecipeByID = async (req, res, recipeID) => {
     }
 }
 
+
+
+
+
 export const updateRecipeByID = async (req, res) => {
     const { recipe } = req
     const { title, ingredients, img, category } = req.body
     const token = req.token
-    if(token.id !== recipe.author.id){
+    if (token.id !== recipe.author.id) {
         return res.status(400).json(`You are not the author of the recipe`)
     }
 
