@@ -4,7 +4,7 @@ import { sequelize } from '../config/database.js'
 const User = sequelize.define(`User`, {
     firstName: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: false,
     },
     email: {
         type: DataTypes.STRING,
