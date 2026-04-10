@@ -11,6 +11,7 @@ import path from 'path'
 import fs from 'fs'
 import cors from 'cors'
 import 'dotenv/config'
+const PORT = process.env.PORT || 8080;
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
@@ -42,7 +43,7 @@ app.get('/', (req, res) => {
 app.use('/api', usersRouter, recipesRouter, authRouter)
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.listen(3000, async () => {
+app.listen(PORT, async () => {
     try {
         await sequelize.authenticate()
         console.log('Connection has been established successfully.');
